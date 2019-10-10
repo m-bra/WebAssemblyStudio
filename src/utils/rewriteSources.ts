@@ -37,6 +37,8 @@ function expandURL(path: string, base: string): string {
   return new URL(path, "https://example.org/" + base).pathname.substr(1);
 }
 
+/// searches given js file for `from 'XYZ.js'` and runs processJSFile on XYZ.js,
+/// then replaces XYZ.js with the URL of the processed js file.
 export function rewriteJS(context: RewriteSourcesContext, jsFileName: string): string {
   const file = context.project.getFile(jsFileName);
   if (!file) {
@@ -54,6 +56,9 @@ export function rewriteJS(context: RewriteSourcesContext, jsFileName: string): s
   });
 }
 
+/// edits the given js file using rewriteJS,
+/// saves the edited version into a new file using context.createFile 
+/// and returns the url of the new file
 export function processJSFile(context: RewriteSourcesContext, fullPath: string): string {
   if (context.processedFiles[fullPath]) {
     return context.processedFiles[fullPath];
@@ -64,6 +69,10 @@ export function processJSFile(context: RewriteSourcesContext, fullPath: string):
   return resultUrl;
 }
 
+/// searches for referenced javascript files (with `src=file.js`) in the html file,
+/// then recursively searches for referenced js files in the referenced js files (with `from module.js`)
+/// and moves the whole module tree to new files created using context.createFile(),
+/// updating the references between the files.
 export function rewriteHTML(context: RewriteSourcesContext, htmlFileName: string): string {
   const file = context.project.getFile(htmlFileName);
   if (!file) {

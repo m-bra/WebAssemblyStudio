@@ -62,6 +62,11 @@ module.exports = env => {
                 }
             }
         }
+    },
+    devServer: {
+        allowedHosts: [
+            '.codenvy.io'
+        ]
     }
   };
 

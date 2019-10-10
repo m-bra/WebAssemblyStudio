@@ -307,10 +307,19 @@ export async function runTask(
 }
 
 export async function run() {
+  pushStatus("Running Project");
+  await runTask("run");
+  popStatus();
+}
+
+/// moves js files mentioned in main.html and the recursive js module tree to Blob()s
+/// then dispatches SANDBOX_RUN with the edited html/js file tree
+export async function _old_run() {
   const mainFileName = "src/main.html";
   const projectModel = appStore.getProject().getModel();
   const context = new RewriteSourcesContext(projectModel);
   context.logLn = logLn;
+  
   context.createFile = (src: ArrayBuffer|string, type: string) => {
     const blob = new Blob([src], { type, });
     return window.URL.createObjectURL(blob);
